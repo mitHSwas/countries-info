@@ -5,8 +5,59 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rest Country</title>
+    <style>
+        #container{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .country{
+            border: 10px solid goldenrod;
+            border-radius: 15px;
+            margin: 10px;
+            padding: 10px;
+        }
+        .countryName{
+            color: #1512e6;
+            font-size: 35px;
+        }
+    </style>
 </head>
-<body>
-    <h1>All Country have to came.</h1>
+<body style="text-align: center;">
+    <h1>Let's See All The Country and It Details Below:</h1>
+    <button id="button">Click Here</button>
+    <div id="countryDetails"></div>
+    <div id="container"></div>
+    <script>
+        document.getElementById("button").addEventListener("click", function(){
+            const countriesDiv = document.getElementById("container");
+            fetch("https://restcountries.com/v3.1/all")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(country => {
+                    const countryDiv = document.createElement('div');
+                    const countryInfo = `<h3 class= 'countryName'>${country.name.common}</h3>
+                                        <p>${country.capital}</p>
+                                        <button onClick="displayCountry('${country.name.common}')">Details</button>`;
+                    countryDiv.innerHTML = countryInfo;
+                    countryDiv.className = 'country'
+                    countriesDiv.appendChild(countryDiv);
+                });
+            })
+        })
+        const displayCountry = name =>{
+            const url =`https://restcountries.com/v3.1/name/${name}`;
+            fetch(url)
+            .then(res => res.json())
+            .then(data => displayCountryDetails(data[0]))
+        }
+        const displayCountryDetails = country =>{
+            const countryDiv = document.getElementById("countryDetails");
+            countryDiv.innerHTML = `
+                <img src="${country.flags.png}">
+                <h3>Population: ${country.population}</h3>
+                <p>Region: ${country.region}</p> 
+            `;
+        }
+    </script>
 </body>
 </html>
